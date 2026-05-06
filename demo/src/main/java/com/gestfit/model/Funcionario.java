@@ -1,5 +1,8 @@
 package com.gestfit.model;
+import jakarta.persistence.Entity;
+import java.time.LocalDate;
 
+@Entity
 public class Funcionario extends Pessoa {
 
     protected String cargo;
@@ -8,8 +11,8 @@ public class Funcionario extends Pessoa {
 
     public Funcionario() { }
 
-    public Funcionario(long id, String nome, String cpf, String telefone, String email, String cargo, double salario) {
-        super(id, nome, cpf, telefone, email);
+    public Funcionario(long id, String nome, String cpf, String telefone, String email, LocalDate dataNascimento , String cargo, double salario) {
+        super(id, nome, cpf, telefone, email, dataNascimento);
         this.cargo = cargo;
         this.salarioBase = salario;
     }

@@ -1,21 +1,29 @@
 package com.gestfit.model;
+import jakarta.persistence.*;
+import java.time.LocalDate;
 
+@MappedSuperclass
 public abstract class Pessoa {
 
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    protected long id;
+
    protected String nome;
    protected String cpf;
    protected String telefone;
    protected String email;
+   protected LocalDate dataNascimento;
 
    public Pessoa() { }
 
-    public Pessoa (long id, String nome, String cpf, String telefone, String email) {
+    public Pessoa (long id, String nome, String cpf, String telefone, String email, LocalDate dataNascimento) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.telefone = telefone;
         this.email = email;
+        this.dataNascimento = dataNascimento;
     }
 
     public long getId() {
@@ -56,6 +64,14 @@ public abstract class Pessoa {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
 }
