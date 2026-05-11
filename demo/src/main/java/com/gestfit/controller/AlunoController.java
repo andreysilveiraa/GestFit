@@ -3,6 +3,7 @@ package com.gestfit.controller;
 import com.gestfit.model.Aluno;
 import com.gestfit.repository.AlunoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +18,9 @@ public class AlunoController {
     private AlunoRepository repo;
 
     @GetMapping
-    public List<Aluno> getTodosAlunos() {
-        return repo.findAll();
+    public String getTodosAlunos (Model model){
+        model.addAttribute("listaAlunos", repo.findAll());
+        return "alunos"; //nome do arquivo html que vai ser carregado
     }
 
 }

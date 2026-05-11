@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller //mudei para @Controller para carregar a página html
 public class HomeController {
 
     @GetMapping("/")
