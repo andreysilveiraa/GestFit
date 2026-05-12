@@ -23,6 +23,8 @@ public class DataInitializer {
                 if (repo.findByCpf (a.getCpf()).isEmpty()){
                     repo.save(a);
                 }
+
+                return;//tirar isso
             }
         };
     }

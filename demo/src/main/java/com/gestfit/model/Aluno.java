@@ -18,6 +18,7 @@ public class Aluno extends Pessoa{
         this.ativo = true;
     }
 
+
     public Aluno(long id, String nome, String cpf, String telefone, String email, LocalDate dataNascimento, String endereco, boolean ativo) {
         super(id, nome, cpf, telefone, email, dataNascimento);
         this.endereco = endereco;
