@@ -24,7 +24,7 @@ public class DataInitializer {
                     repo.save(a);
                 }
 
-                return;//tirar isso
+
             }
         };
     }
