@@ -11,10 +11,16 @@ public class Funcionario extends Pessoa {
 
     public Funcionario() { }
 
-    public Funcionario(long id, String nome, String cpf, String telefone, String email, LocalDate dataNascimento , String cargo, double salario) {
-        super(id, nome, cpf, telefone, email, dataNascimento);
+    public Funcionario(String nome, String cpf, String matricula ,String telefone, String email, LocalDate dataNascimento , String cargo, double salario) {
+        super(nome, cpf, matricula ,telefone, email, dataNascimento);
         this.cargo = cargo;
         this.salarioBase = salario;
+    }
+
+    public Funcionario(String nome, String cpf, String matricula){
+        this.nome = nome;
+        this.cpf = cpf;
+        this.matricula = matricula ;
     }
 
     public String getCargo() {

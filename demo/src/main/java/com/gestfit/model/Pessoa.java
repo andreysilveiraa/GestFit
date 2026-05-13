@@ -9,30 +9,29 @@ public abstract class Pessoa {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    protected long id;
 
+   @Column(nullable = false)
    protected String nome;
+
+   @Column(unique = true, nullable = false )
    protected String cpf;
+
+   @Column(unique = true)
+   protected String matricula;
+
    protected String telefone;
    protected String email;
    protected LocalDate dataNascimento;
 
    public Pessoa() { }
 
-    public Pessoa (long id, String nome, String cpf, String telefone, String email, LocalDate dataNascimento) {
-        this.id = id;
+    public Pessoa (String nome, String cpf, String matricula, String telefone, String email, LocalDate dataNascimento) {
         this.nome = nome;
         this.cpf = cpf;
+        this.matricula = matricula;
         this.telefone = telefone;
         this.email = email;
         this.dataNascimento = dataNascimento;
     }
-
-    public long getId() {
-        return id;
-    }
-
-//    public void setId(long id) {
-//        this.id = id;
-//    }
 
     public String getNome() {
         return nome;
@@ -48,6 +47,14 @@ public abstract class Pessoa {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
     }
 
     public String getTelefone() {

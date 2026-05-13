@@ -12,19 +12,20 @@ public class Aluno extends Pessoa{
 
     public Aluno() { }
 
-    public Aluno(String nome, String cpf){ // Isto é para teste
+    public Aluno(String nome, String cpf, String matricula){ // Isto é para teste
         this.nome = nome;
         this.cpf = cpf;
+        this.matricula = matricula ;
         this.ativo = true;
     }
 
 
-    public Aluno(long id, String nome, String cpf, String telefone, String email, LocalDate dataNascimento, String endereco, boolean ativo) {
-        super(id, nome, cpf, telefone, email, dataNascimento);
+    public Aluno(String nome, String cpf, String matricula, String telefone, String email,
+                 LocalDate dataNascimento, String endereco, boolean ativo) {
+        super(nome, cpf, matricula, telefone, email, dataNascimento);
         this.endereco = endereco;
         this.ativo = ativo;
     }
-
 
     public String getEndereco() {
         return endereco;
