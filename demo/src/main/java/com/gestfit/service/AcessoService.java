@@ -21,6 +21,9 @@ public class AcessoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private MatriculaService matriculaService;
+
     // --- MÉTODOS DE AUTENTICAÇÃO (O QUE FALTAVA) ---
 
     public boolean autenticar(String login, String senha) {
@@ -39,11 +42,18 @@ public class AcessoService {
         return true;
     }
 
-    // --- MÉTODOS DE ACESSO DO ALUNO ---
+    // --- MÉTODOS DE ACESSO DO ALUNO (Adicionais da Juliana sobre matrícula ativa) ---
 
     public boolean validarAcessoAluno(Long idAluno) {
         return alunoRepository.findById(idAluno)
-                .map(aluno -> aluno.isAtivo())
+                .map(aluno -> {
+                    // 1. Verifica se o cadastro do aluno está ativo
+                    boolean cadastroAtivo = aluno.isAtivo();
+                    // 2. Chama a regra da Juliana para ver se a matrícula está ATIVA e em dia
+                    boolean matriculaEmDia = matriculaService.alunoPodeAcessar(idAluno);
+                    // Só libera se o cadastro estiver ativo E a matrícula em dia (RF15)
+                    return cadastroAtivo && matriculaEmDia;
+                })
                 .orElse(false);
     }
 
@@ -56,7 +66,7 @@ public class AcessoService {
                 frequenciaRepository.save(f);
             });
         } else {
-            throw new RuntimeException("Acesso negado: Aluno inativo ou não encontrado.");
+            throw new RuntimeException("Acesso negado: Aluno inativo, inadimplente ou sem matrícula válida.");
         }
     }
 }

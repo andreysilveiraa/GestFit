@@ -5,6 +5,7 @@ import com.gestfit.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import java.time.LocalDate;
 
 import java.util.List;
 
@@ -14,7 +15,9 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initDatabase(AlunoRepository alunoRepo,
                                    FuncionarioRepository funcRepo,
-                                   UsuarioRepository usuarioRepo) {
+                                   UsuarioRepository usuarioRepo,
+                                   PlanoRepository planoRepo,
+                                   MatriculaRepository matriculaRepo) {
         return args -> {
             // --- Alunos ---
             List<Aluno> novosAlunos = List.of(
@@ -59,6 +62,33 @@ public class DataInitializer {
                 usuarioRepo.save(prof);
 
                 System.out.println(">>> Usuários de teste (admin e prof) criados com sucesso!");
+            }
+
+            // PARTE DA JULIANA: Plano e Matrícula
+            if (planoRepo.count() == 0) {
+                Plano planoMensal = new Plano(Tipos.MENSAL, 120.0, 1, "Plano Mensal Básico");
+                Plano planoAnual = new Plano(Tipos.ANUAL, 1000.0, 12, "Plano Anual Completo com desconto");
+
+                planoRepo.save(planoMensal);
+                planoRepo.save(planoAnual);
+                System.out.println(">>> Planos de teste criados com sucesso!");
+
+                List<Aluno> alunosCadastrados = alunoRepo.findAll();
+                if (!alunosCadastrados.isEmpty()) {
+                    Aluno primeiroAluno = alunosCadastrados.get(0); // Pega o Marcos Silva
+
+                    Matricula matriculaTeste = new Matricula();
+                    matriculaTeste.setAluno(primeiroAluno);
+                    matriculaTeste.setPlano(planoAnual);
+                    matriculaTeste.setDataInicio(LocalDate.now());
+                    matriculaTeste.setDataTermino(LocalDate.now().plusMonths(planoAnual.getDuracaoMeses()));
+                    matriculaTeste.setStatus(StatusMatricula.ATIVA);
+
+                    matriculaTeste.setStatus(StatusMatricula.ATIVA);
+
+                    matriculaRepo.save(matriculaTeste);
+                    System.out.println(">>> Matrícula de teste vinculada ao aluno " + primeiroAluno.getNome() + " criada com sucesso!");
+                }
             }
         };
     }
