@@ -6,7 +6,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.time.LocalDate;
-
 import java.util.List;
 
 @Configuration
@@ -14,10 +13,12 @@ public class DataInitializer {
 
     @Bean
     CommandLineRunner initDatabase(AlunoRepository alunoRepo,
-                                   FuncionarioRepository funcRepo,
                                    UsuarioRepository usuarioRepo,
                                    PlanoRepository planoRepo,
-                                   MatriculaRepository matriculaRepo) {
+                                   MatriculaRepository matriculaRepo,
+                                   ProfessorRepository professorRepo,
+                                   RecepcionistaRepository recepcionistaRepo,
+                                   PagamentoRepository pagamentoRepo){
         return args -> {
             // --- Alunos ---
             List<Aluno> novosAlunos = List.of(
@@ -31,15 +32,45 @@ public class DataInitializer {
                 }
             }
 
-            // --- Funcionários ---
-            List<Funcionario> novosFuncionarios = List.of(
-                    new Funcionario("Ana Pereira", "111.222.333-44", "F-0001"),
-                    new Funcionario("Carlos Oliveira", "666.777.888-55", "F-0002")
+            // --- Professores --- (Manu)
+            List<Professor> novosProfessores = List.of(
+                    new Professor(
+                            "Ana Pereira", "111.222.333-44", "P-0001", "85988881111", "ana.prof@gestfit.com",
+                            LocalDate.of(1993, 4, 15), "Professor I", 3500.0, LocalDate.now(),
+                            "40h", "Manhã", "Musculação"
+                    ),
+                    new Professor(
+                            "Bruno Costa", "222.333.444-55", "P-0002", "85988882222", "bruno.prof@gestfit.com",
+                            LocalDate.of(1990, 11, 2), "Professor II", 3800.0, LocalDate.now(),
+                            "30h", "Noite", "Crossfit"
+                    )
             );
 
-            for (Funcionario f : novosFuncionarios) {
-                if (funcRepo.findByCpf(f.getCpf()).isEmpty()) {
-                    funcRepo.save(f);
+            for (Professor p : novosProfessores) {
+                if (professorRepo.findByCpf(p.getCpf()).isEmpty()) {
+                    professorRepo.save(p);
+                    System.out.println(">>> Professor " + p.getNome() + " criado com sucesso!");
+                }
+            }
+
+            // --- Recepcionistas --- (Manu)
+            List<Recepcionista> novasRecepcionistas = List.of(
+                    new Recepcionista(
+                            "Carlos Oliveira", "666.777.888-55", "R-0001", "85999993333", "carlos.recep@gestfit.com",
+                            LocalDate.of(1997, 8, 20), "Recepcionista Diurno", 2200.0, LocalDate.now(),
+                            "44h", "Tarde"
+                    ),
+                    new Recepcionista(
+                            "Mariana Lima", "777.888.999-66", "R-0002", "85999994444", "mariana.recep@gestfit.com",
+                            LocalDate.of(1999, 1, 10), "Recepcionista Noturno", 2400.0, LocalDate.now(),
+                            "44h", "Noite"
+                    )
+            );
+
+            for (Recepcionista r : novasRecepcionistas) {
+                if (recepcionistaRepo.findByCpf(r.getCpf()).isEmpty()) {
+                    recepcionistaRepo.save(r);
+                    System.out.println(">>> Recepcionista " + r.getNome() + " criada com sucesso!");
                 }
             }
 
@@ -75,7 +106,7 @@ public class DataInitializer {
 
                 List<Aluno> alunosCadastrados = alunoRepo.findAll();
                 if (!alunosCadastrados.isEmpty()) {
-                    Aluno primeiroAluno = alunosCadastrados.get(0); // Pega o Marcos Silva
+                    Aluno primeiroAluno = alunosCadastrados.get(0);
 
                     Matricula matriculaTeste = new Matricula();
                     matriculaTeste.setAluno(primeiroAluno);
@@ -84,11 +115,25 @@ public class DataInitializer {
                     matriculaTeste.setDataTermino(LocalDate.now().plusMonths(planoAnual.getDuracaoMeses()));
                     matriculaTeste.setStatus(StatusMatricula.ATIVA);
 
-                    matriculaTeste.setStatus(StatusMatricula.ATIVA);
-
-                    matriculaRepo.save(matriculaTeste);
+                    matriculaRepo.save(matriculaTeste); // Linha duplicada removida aqui
                     System.out.println(">>> Matrícula de teste vinculada ao aluno " + primeiroAluno.getNome() + " criada com sucesso!");
                 }
+            } // <--- O bloco da Juliana FECHA AQUI CORRETAMENTE!
+
+            // --- PARTE DE PAGAMENTOS (Manu) --- GAVETA INDEPENDENTE
+            if (pagamentoRepo.count() == 0) {
+                // Teste 1: Um pagamento que nasce pendente
+                Pagamento pag1t = new Pagamento();
+                pag1t.setDataVencimento(LocalDate.now().plusDays(5));
+                pagamentoRepo.save(pag1t);
+                System.out.println(">>> Registro de Pagamento 1 (PENDENTE) criado no Supabase!");
+
+                // Teste 2: Pagamento que nasce pendente, mas o aluno pagou via PIX
+                Pagamento pag2t = new Pagamento();
+                pag2t.setDataVencimento(LocalDate.now().minusDays(2));
+                pag2t.registrarPagamento(FormaPagamento.PIX);
+                pagamentoRepo.save(pag2t);
+                System.out.println(">>> Registro de Pagamento 2 (PAGO via PIX) criado no Supabase!");
             }
         };
     }
