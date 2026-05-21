@@ -5,7 +5,7 @@ import com.gestfit.model.FormaPagamento;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record RegistrarPagmentoDTO(
+public record RegistrarPagamentoDTO(
 
         @NotNull(message = "O ID do pagamento é obrigatório")
         Long idPagamento,

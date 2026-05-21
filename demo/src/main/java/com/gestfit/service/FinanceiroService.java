@@ -1,6 +1,6 @@
 package com.gestfit.service;
 
-import com.gestfit.dto.RegistrarPagmentoDTO;
+import com.gestfit.dto.RegistrarPagamentoDTO;
 import com.gestfit.model.*;
 import com.gestfit.repository.MatriculaRepository;
 import com.gestfit.repository.ProfessorRepository;
@@ -29,7 +29,7 @@ public class FinanceiroService {
 
     // Método 1
     @Transactional
-    public void registrarPagamento (RegistrarPagmentoDTO dto){
+    public void registrarPagamento (RegistrarPagamentoDTO dto){
         Pagamento pagamento = pagamentoService.buscarPorId(dto.idPagamento());
 
         pagamento.registrarPagamento(dto.formaPagamento());

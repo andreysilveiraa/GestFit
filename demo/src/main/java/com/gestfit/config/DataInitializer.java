@@ -23,7 +23,8 @@ public class DataInitializer {
             // --- Alunos ---
             List<Aluno> novosAlunos = List.of(
                     new Aluno("Marcos Silva", "987.654.321-11", "20000"),
-                    new Aluno("Clara Souza", "555.444.333-22", "20001")
+                    new Aluno("Clara Souza", "555.444.333-22", "20001"),
+                    new Aluno("Lucas Oliveira", "123.456.789-00", "20002")
             );
 
             for (Aluno a : novosAlunos) {

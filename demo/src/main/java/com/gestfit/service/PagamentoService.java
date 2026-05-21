@@ -21,7 +21,7 @@ public class PagamentoService {
         pagamentoRepo.save(pagamento);
     }
 
-    public List<Pagamento> ListarTodosOsPagamentos(){
+    public List<Pagamento> listarTodos(){
         return pagamentoRepo.findAll();
     }
 }

@@ -1,6 +1,6 @@
 package com.gestfit.controller;
 
-import com.gestfit.dto.RegistrarPagmentoDTO;
+import com.gestfit.dto.RegistrarPagamentoDTO;
 import com.gestfit.model.Aluno;
 import com.gestfit.service.FinanceiroService;
 import jakarta.validation.Valid;
@@ -25,11 +25,11 @@ public class FinanceiroController {
 
     @GetMapping("/painel")
     public String exibirPainel(Model model){
-        model.addAttribute("registrarPagmentoDTO", new RegistrarPagmentoDTO(null, 0.0, null));
+        model.addAttribute("registrarPagamentoDTO", new RegistrarPagamentoDTO(null, 0.0, null));
         return "financeiro/painel-financeiro";
     }
     @PostMapping("/baixar")
-    public String processarBaixaPagamento(@Valid @ModelAttribute("registrarPagamentoDTO") RegistrarPagmentoDTO dto, BindingResult result,
+    public String processarBaixaPagamento(@Valid @ModelAttribute("registrarPagamentoDTO") RegistrarPagamentoDTO dto, BindingResult result,
                                           RedirectAttributes redirectAttributes){
         if (result.hasErrors()){
             return "financeiro/painel-financeiro";
@@ -40,7 +40,7 @@ public class FinanceiroController {
 
         }
         catch (RuntimeException e){
-            redirectAttributes.addFlashAttribute("mensagemErro", e.getMessage());
+            redirectAttributes.addFlashAttribute("MensagemErro", e.getMessage());
         }
 
         return "redirect:/financeiro/painel";
@@ -50,9 +50,9 @@ public class FinanceiroController {
     public String fecharFolhaSalarios(RedirectAttributes redirectAttributes) {
         try {
             financeiroService.processarSalarios();
-            redirectAttributes.addFlashAttribute("mensagemSucesso", "Folha de pagamento calculada com sucesso no console!");
+            redirectAttributes.addFlashAttribute("MensagemSucesso", "Folha de pagamento calculada com sucesso no console!");
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao processar salários: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("MensagemErro", "Erro ao processar salários: " + e.getMessage());
         }
         return "redirect:/financeiro/painel";
     }

@@ -19,8 +19,8 @@ public class PagamentoController {
     private PagamentoService pagamentoService;
 
     @GetMapping
-    public String ListarTodos(Model model){
-        List<Pagamento> pagamentos = pagamentoService.ListarTodosOsPagamentos();
+    public String listarTodos(Model model){
+        List<Pagamento> pagamentos = pagamentoService.listarTodos();
         model.addAttribute("ListaPagamentos", pagamentos);
         return "financeiro/lista-pagamentos"; //Vai renderizar o arquivo lista-pagamentos.html
     }
@@ -30,7 +30,8 @@ public class PagamentoController {
        try{
         Pagamento pagamento = pagamentoService.buscarPorId(id);
         model.addAttribute("pagamento", pagamento);
-        return "financeiro/detalhes-pagamento"; }// Vai renderizar o arquivo detalhes-pagamento.html
+        return "financeiro/detalhes-pagamento";
+       }// Vai renderizar o arquivo detalhes-pagamento.html
         catch ( RuntimeException e){
            model.addAttribute("MensagemErro", e.getMessage());
            return "erro";
