@@ -2,6 +2,7 @@ package com.gestfit.controller;
 
 import com.gestfit.dto.RegistrarPagamentoDTO;
 import com.gestfit.model.Aluno;
+import com.gestfit.model.Despesa;
 import com.gestfit.service.FinanceiroService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,10 @@ public class FinanceiroController {
     @GetMapping("/painel")
     public String exibirPainel(Model model){
         model.addAttribute("registrarPagamentoDTO", new RegistrarPagamentoDTO(null, 0.0, null));
+
+        List<Despesa> despesas = financeiroService.listarTodasAsDespesas();
+        model.addAttribute("listaDespesas", despesas);
+
         return "financeiro/painel-financeiro";
     }
     @PostMapping("/baixar")
@@ -50,7 +55,7 @@ public class FinanceiroController {
     public String fecharFolhaSalarios(RedirectAttributes redirectAttributes) {
         try {
             financeiroService.processarSalarios();
-            redirectAttributes.addFlashAttribute("MensagemSucesso", "Folha de pagamento calculada com sucesso no console!");
+            redirectAttributes.addFlashAttribute("MensagemSucesso", "Folha de pagamento processada e salva com sucesso no banco de dados!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("MensagemErro", "Erro ao processar salários: " + e.getMessage());
         }

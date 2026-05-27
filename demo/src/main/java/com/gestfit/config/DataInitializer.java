@@ -2,6 +2,7 @@ package com.gestfit.config;
 
 import com.gestfit.model.*;
 import com.gestfit.repository.*;
+import com.gestfit.service.FinanceiroService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +19,11 @@ public class DataInitializer {
                                    MatriculaRepository matriculaRepo,
                                    ProfessorRepository professorRepo,
                                    RecepcionistaRepository recepcionistaRepo,
-                                   PagamentoRepository pagamentoRepo){
+                                   PagamentoRepository pagamentoRepo,
+                                   FolhaDePagamentoRepository folhaDePagamentoRepo,
+                                   DespesaRepository despesaRepo,
+                                   FinanceiroService financeiroService
+    ){
         return args -> {
             // --- Alunos ---
             List<Aluno> novosAlunos = List.of(
@@ -119,9 +124,9 @@ public class DataInitializer {
                     matriculaRepo.save(matriculaTeste); // Linha duplicada removida aqui
                     System.out.println(">>> Matrícula de teste vinculada ao aluno " + primeiroAluno.getNome() + " criada com sucesso!");
                 }
-            } // <--- O bloco da Juliana FECHA AQUI CORRETAMENTE!
+            } //
 
-            // --- PARTE DE PAGAMENTOS (Manu) --- GAVETA INDEPENDENTE
+            // --- PARTE DE PAGAMENTOS (Manu)
             if (pagamentoRepo.count() == 0) {
                 // Teste 1: Um pagamento que nasce pendente
                 Pagamento pag1t = new Pagamento();
@@ -135,6 +140,26 @@ public class DataInitializer {
                 pag2t.registrarPagamento(FormaPagamento.PIX);
                 pagamentoRepo.save(pag2t);
                 System.out.println(">>> Registro de Pagamento 2 (PAGO via PIX) criado no Supabase!");
+            }
+
+            if (despesaRepo.count() == 0 && folhaDePagamentoRepo.count() == 0) {
+                System.out.println("\n=== INICIANDO CONFIGURAÇÃO DE TESTE DO SUBMÓDULO FINANCEIRO ===");
+
+
+                Despesa contaAluguel = new Despesa(
+                        "Aluguel do Galpão da Academia",
+                        4500.00,
+                        LocalDate.now().plusDays(10),
+                        CategoriaDaDespesa.ALUGUEL
+                );
+                despesaRepo.save(contaAluguel);
+                System.out.println(">>> Teste A: Despesa manual de ALUGUEL criada no Supabase!");
+
+
+                System.out.println(">>> Teste B: Chamando o orquestrador 'processarSalarios()'...");
+                financeiroService.processarSalarios();
+
+                System.out.println("=== FINALIZADO COM SUCESSO OS TESTES DO INTEGRADO FINANCEIRO ===\n");
             }
         };
     }
