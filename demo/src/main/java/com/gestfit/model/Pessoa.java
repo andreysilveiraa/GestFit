@@ -1,30 +1,25 @@
 package com.gestfit.model;
+
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-@MappedSuperclass
+@MappedSuperclass // Permite que os atributos sejam herdados pelas tabelas de Aluno, Professor e Recepcionista
 public abstract class Pessoa {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
-   protected long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
 
-   @Column(nullable = false)
-   protected String nome;
+    protected String nome;
+    protected String cpf;
+    protected String matricula;
+    protected String telefone;
+    protected String email;
+    protected LocalDate dataNascimento;
 
-   @Column(unique = true, nullable = false )
-   protected String cpf;
+    public Pessoa() {}
 
-   @Column(unique = true)
-   protected String matricula;
-
-   protected String telefone;
-   protected String email;
-   protected LocalDate dataNascimento;
-
-   public Pessoa() { }
-
-    public Pessoa (String nome, String cpf, String matricula, String telefone, String email, LocalDate dataNascimento) {
+    public Pessoa(String nome, String cpf, String matricula, String telefone, String email, LocalDate dataNascimento) {
         this.nome = nome;
         this.cpf = cpf;
         this.matricula = matricula;
@@ -33,52 +28,25 @@ public abstract class Pessoa {
         this.dataNascimento = dataNascimento;
     }
 
-    public String getNome() {
-        return nome;
-    }
+    // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public String getCpf() {
-        return cpf;
-    }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+    public String getMatricula() { return matricula; }
+    public void setMatricula(String matricula) { this.matricula = matricula; }
 
-    public String getMatricula() {
-        return matricula;
-    }
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
 
-    public void setMatricula(String matricula) {
-        this.matricula = matricula;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
-
+    public LocalDate getDataNascimento() { return dataNascimento; }
+    public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
 }

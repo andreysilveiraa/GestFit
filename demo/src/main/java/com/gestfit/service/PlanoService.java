@@ -5,38 +5,34 @@ import com.gestfit.repository.PlanoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PlanoService {
 
     @Autowired
-    private PlanoRepository planoRepo;
+    private PlanoRepository planoRepository;
 
-    public Plano salvarPlano(Plano plano) {
-        if (plano.getId() == null) {
-            plano.setAtivo(true);
-        }
-        return planoRepo.save(plano);
+    public void cadastrarPlano(Plano plano) {
+        plano.setAtivo(true);
+        planoRepository.save(plano);
     }
 
-    public List<Plano> listarTodosOsPlanos() {
-        return planoRepo.findAll();
+    public void editarPlano(Plano plano) {
+        planoRepository.save(plano);
     }
 
-    public List<Plano> listarPlanosAtivos() {
-        return planoRepo.findByAtivoTrue();
-    }
-
-    public Optional<Plano> buscarPorId(Long id) {
-        return planoRepo.findById(id);
-    }
-
-    public void inativarPlano(Long id) {
-        planoRepo.findById(id).ifPresent(plano -> {
-            plano.setAtivo(false);
-            planoRepo.save(plano);
-            System.out.println(">>> O plano '" + plano.getDescricao() + "' foi inativado.");
+    public void excluirPlano(Long id) {
+        planoRepository.findById(id).ifPresent(plano -> {
+            plano.setAtivo(false); // Exclusão lógica para não quebrar o histórico de matrículas
+            planoRepository.save(plano);
         });
+    }
+
+    public Plano consultarPlano(Long id) {
+        return planoRepository.findById(id).orElse(null);
+    }
+
+    public List<Plano> listarTodos() {
+        return planoRepository.findByAtivoTrue();
     }
 }

@@ -80,7 +80,6 @@ public class DataInitializer {
                 }
             }
 
-            // --- PARTE DO ANDREY: Usuários do Sistema ---
             if (usuarioRepo.count() == 0) {
                 Usuario admin = new Usuario();
                 admin.setNome("Andrey Admin");

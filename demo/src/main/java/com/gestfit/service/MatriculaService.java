@@ -1,60 +1,62 @@
 package com.gestfit.service;
 
+import com.gestfit.model.Aluno;
 import com.gestfit.model.Matricula;
+import com.gestfit.model.Plano;
 import com.gestfit.model.StatusMatricula;
 import com.gestfit.repository.MatriculaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.gestfit.model.Aluno;
-import com.gestfit.model.Plano;
-
 import java.time.LocalDate;
 
 @Service
 public class MatriculaService {
 
     @Autowired
-    private MatriculaRepository matriculaRepo;
+    private MatriculaRepository matriculaRepository;
 
-    public Matricula realizarMatricula(Aluno aluno, Plano plano) {
-        if (!plano.getAtivo()) {
-            throw new IllegalArgumentException("Não é possível realizar matrícula em um plano inativo.");
-        }
-
+    // Realiza a matrícula vinculando o Aluno ao Plano e calculando vigência
+    public void realizarMatricula(Aluno aluno, Plano plano) {
         Matricula novaMatricula = new Matricula();
         novaMatricula.setAluno(aluno);
         novaMatricula.setPlano(plano);
 
+        // Define a data de início como o dia de hoje
         novaMatricula.setDataInicio(LocalDate.now());
 
-        int mesesDuracao = plano.getDuracaoMeses();
-        novaMatricula.setDataTermino(LocalDate.now().plusMonths(mesesDuracao));
+        // Calcula a data de término somando a duração em meses do plano selecionado
+        novaMatricula.setDataTermino(LocalDate.now().plusMonths(plano.getDuracaoMeses()));
 
+        // Define o status inicial como ATIVA
         novaMatricula.setStatus(StatusMatricula.ATIVA);
 
-        return matriculaRepo.save(novaMatricula);
+        // Salva a nova matrícula no banco de dados
+        matriculaRepository.save(novaMatricula);
     }
 
-    public void verificarInadimplencia(Long matriculaId) {
-        matriculaRepo.findById(matriculaId).ifPresent(m -> {
-            if (LocalDate.now().isAfter(m.getDataTermino())) {
-                m.alterarStatus(StatusMatricula.PENDENTE);
-                matriculaRepo.save(m);
-            }
-        });
-    }
-
-    public boolean alunoPodeAcessar(Long alunoId) {
-        return matriculaRepo.findByAlunoId(alunoId)
-                .map(m -> m.getStatus() == StatusMatricula.ATIVA && LocalDate.now().isBefore(m.getDataTermino()))
+    // Regra essencial usada pelo AcessoService para liberar a catraca
+    public boolean alunoPodeAcessar(Long idAluno) {
+        return matriculaRepository.findByAlunoId(idAluno)
+                .map(matricula -> {
+                    boolean ativa = matricula.getStatus() == StatusMatricula.ATIVA;
+                    boolean dentroDoPrazo = !LocalDate.now().isAfter(matricula.getDataTermino());
+                    return ativa && dentroDoPrazo;
+                })
                 .orElse(false);
     }
 
-    public void cancelarMatricula(Long matriculaId) {
-        matriculaRepo.findById(matriculaId).ifPresent(m -> {
-            m.alterarStatus(StatusMatricula.CANCELADA);
-            matriculaRepo.save(m);
-            System.out.println("Matrícula " + matriculaId + " foi cancelada com sucesso.");
+    // Cancela a matrícula alterando o status para CANCELADA
+    public void processarCancelamento(Long idMatricula) {
+        matriculaRepository.findById(idMatricula).ifPresent(matricula -> {
+            matricula.alterarStatus(StatusMatricula.CANCELADA);
+            matriculaRepository.save(matricula);
         });
+    }
+
+    // Verifica se a matrícula possui pendências financeiras
+    public boolean verificarInadimplencia(Long idMatricula) {
+        return matriculaRepository.findById(idMatricula)
+                .map(matricula -> matricula.getStatus() == StatusMatricula.PENDENTE)
+                .orElse(true);
     }
 }
