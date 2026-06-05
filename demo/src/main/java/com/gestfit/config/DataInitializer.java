@@ -13,7 +13,8 @@ import java.util.List;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initDatabase(AlunoRepository alunoRepo,
+    CommandLineRunner initDatabase(AcademiaRepository academiaRepo,
+                                   AlunoRepository alunoRepo,
                                    UsuarioRepository usuarioRepo,
                                    PlanoRepository planoRepo,
                                    MatriculaRepository matriculaRepo,
@@ -22,9 +23,23 @@ public class DataInitializer {
                                    PagamentoRepository pagamentoRepo,
                                    FolhaDePagamentoRepository folhaDePagamentoRepo,
                                    DespesaRepository despesaRepo,
-                                   FinanceiroService financeiroService
-    ){
+                                   FinanceiroService financeiroService){
         return args -> {
+
+            // --- Unidades de Academia (RF24) ---
+            if (academiaRepo.count() == 0) {
+                Academia unidadeMatriz = new Academia(
+                        "GestFit - Unidade Matriz",
+                        "12.345.678/0001-99",
+                        "(85) 99999-8888",
+                        "Av. Principal, 1230",
+                        "matriz@gestfit.com",
+                        "123456"
+                );
+                academiaRepo.save(unidadeMatriz);
+                System.out.println(">>> Unidade Matriz da Academia criada com sucesso para testes!");
+            }
+
             // --- Alunos ---
             List<Aluno> novosAlunos = List.of(
                     new Aluno("Marcos Silva", "987.654.321-11", "20000"),
