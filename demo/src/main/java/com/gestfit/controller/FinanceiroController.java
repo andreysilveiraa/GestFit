@@ -4,6 +4,7 @@ import com.gestfit.dto.RegistrarPagamentoDTO;
 import com.gestfit.model.Aluno;
 import com.gestfit.model.Despesa;
 import com.gestfit.service.FinanceiroService;
+import com.gestfit.repository.FolhaDePagamentoRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,15 +25,23 @@ public class FinanceiroController {
     @Autowired
     private FinanceiroService financeiroService;
 
+    @Autowired
+    private FolhaDePagamentoRepository folhaDePagamentoRepo;
+
     @GetMapping("/painel")
     public String exibirPainel(Model model){
         model.addAttribute("registrarPagamentoDTO", new RegistrarPagamentoDTO(null, 0.0, null));
 
         List<Despesa> despesas = financeiroService.listarTodasAsDespesas();
         model.addAttribute("listaDespesas", despesas);
+        model.addAttribute("listaFolhas", folhaDePagamentoRepo.findAll());
+
+        model.addAttribute("novaDespesa", new com.gestfit.model.Despesa());
+        model.addAttribute("categorias", com.gestfit.model.CategoriaDaDespesa.values());
 
         return "financeiro/painel-financeiro";
     }
+
     @PostMapping("/baixar")
     public String processarBaixaPagamento(@Valid @ModelAttribute("registrarPagamentoDTO") RegistrarPagamentoDTO dto, BindingResult result,
                                           RedirectAttributes redirectAttributes){

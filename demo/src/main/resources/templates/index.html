@@ -3,43 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestFit - Dashboard</title>
+    <title>GestFit - Portaria e Acesso</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* INJEÇÃO DO SEU DESIGN COMPLETO E CORRIGIDO */
+        :root {
+            --color-background-primary: #ffffff;
+            --color-background-secondary: #f9fafb;
+            --color-background-tertiary: #f3f4f6;
+            --color-border-secondary: #d1d5db;
+            --color-border-tertiary: #e5e7eb;
+            --color-text-primary: #111827;
+            --color-text-secondary: #6b7280;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            color: var(--color-text-primary);
+            background: var(--color-background-tertiary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: var(--color-background-primary);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* Lado Administrativo */
+        .admin-side {
+            padding: 40px;
+        }
+
+        /* Lado da Portaria/Aluno */
+        .aluno-side {
+            background: #0F6E56;
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo-mark {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #1D9E75;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--color-text-primary);
+        }
+
+        .aluno-side h3 {
+            color: white;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .aluno-side .subtitle {
+            color: #A7DFD0;
+        }
+
+        label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .aluno-side label {
+            color: #A7DFD0;
+        }
+
+        input {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            padding: 10px 14px;
+            border: 1.5px solid var(--color-border-secondary);
+            border-radius: var(--border-radius-md);
+            background: var(--color-background-primary);
+            color: var(--color-text-primary);
+            outline: none;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .aluno-side input {
+            background: #137e63;
+            border-color: #179475;
+            color: white;
+        }
+
+        .aluno-side input::placeholder {
+            color: #79cb73;
+        }
+
+        input:focus {
+            border-color: #1D9E75;
+            box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.15);
+        }
+
+        .aluno-side input:focus {
+            border-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-custom {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 20px;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.15s;
+            border: none;
+        }
+
+        .btn-adm {
+            background: #1D9E75;
+            color: white;
+        }
+
+        .btn-adm:hover {
+            background: #0F6E56;
+        }
+
+        .btn-aluno {
+            background: white;
+            color: #0F6E56;
+        }
+
+        .btn-aluno:hover {
+            background: #eafcf7;
+        }
+    </style>
 </head>
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-6">
+<body>
+
+<div class="login-container">
+    <div class="row g-0">
+
+        <div class="col-md-6 admin-side">
+            <div class="logo-mark">
+                <div class="logo-icon">G</div>
+                <div class="logo-text">GestFit</div>
+            </div>
+
             <h3>Login de Funcionário</h3>
-            <form th:action="@{/acesso/entrar}" method="post" class="border p-4 rounded shadow-sm">
+            <p class="subtitle">Acesse para gerenciar funcionários, planos e despesas.</p>
+
+            <form th:action="@{/acesso/entrar}" method="post" class="space-y-4">
                 <div class="mb-3">
-                    <label class="form-label">Login</label>
-                    <input type="text" name="login" class="form-control" required>
+                    <label>Login de Usuário</label>
+                    <input type="text" name="login" placeholder="Ex: admin" required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Senha</label>
-                    <input type="password" name="senha" class="form-control" required>
+                <div class="mb-4">
+                    <label>Senha de Acesso</label>
+                    <input type="password" name="senha" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Entrar</button>
+                <button type="submit" class="btn-custom btn-adm">Entrar no Painel</button>
             </form>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 aluno-side">
             <h3>Registrar Entrada (Aluno)</h3>
-            <form th:action="@{/acesso/registrar-presenca}" method="post" class="border p-4 rounded shadow-sm">
-                <div class="mb-3">
-                    <label class="form-label">ID do Aluno</label>
-                    <input type="number" name="alunoId" class="form-control" placeholder="Digite o ID do aluno" required>
+            <p class="subtitle">Digite sua matrícula para liberar o acesso à academia.</p>
+
+            <form th:action="@{/acesso/registrar-presenca}" method="post">
+                <div class="mb-4">
+                    <label>ID do Aluno (Matrícula)</label>
+                    <input type="number" name="alunoId" placeholder="Digite o ID numérico" required>
                 </div>
-                <button type="submit" class="btn btn-success">Registrar Presença</button>
+                <button type="submit" class="btn-custom btn-aluno">Registrar Presença ➔</button>
             </form>
         </div>
+
     </div>
 </div>
-
-<body>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

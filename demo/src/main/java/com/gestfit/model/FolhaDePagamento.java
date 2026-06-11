@@ -18,7 +18,6 @@ public class FolhaDePagamento {
 
     private double valorTotal;
 
-
     private LocalDate dataProcessamento;
 
     public FolhaDePagamento() {

@@ -8,6 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Optional;
 
@@ -22,7 +25,29 @@ public class AlunoController {
     public String getTodosAlunos(Model model) {
         // Usa o service para listar e manda a lista para o Thymeleaf
         model.addAttribute("listaAlunos", alunoService.listarTodos());
+
+        model.addAttribute("novoAluno", new com.gestfit.model.Aluno());
+        model.addAttribute("statusOpcoes", com.gestfit.model.StatusMatricula.values());
+
+        model.addAttribute("planoOpcoes", com.gestfit.model.Tipos.values());
+
         return "alunos"; // Nome do arquivo alunos.html
+    }
+
+    @PostMapping("/salvar")
+    public String salvarAluno(@ModelAttribute("novoAluno") com.gestfit.model.Aluno aluno,
+                              @RequestHeader(value = "Referer", required = false) String referer) {
+
+        // 1. Salva o novo aluno no banco de dados através do seu Service
+        alunoService.salvarAluno(aluno); // Verifique se o seu service usa o nome .salvar() ou .cadastrar()
+
+        // 2. O truque mágico: se ele souber de onde você veio (tela de alunos ou inadimplentes), ele te joga de volta para lá
+        if (referer != null) {
+            return "redirect:" + referer;
+        }
+
+        // 3. Caso falhe o referer, ele volta para a rota padrão de alunos
+        return "redirect:/alunos";
     }
 
     @GetMapping("/buscar")
@@ -37,5 +62,7 @@ public class AlunoController {
         }
         return "aluno-nao-encontrado"; // aluno-nao-encontrado.html
     }
+
+
 }
 //localhost:8080/alunos

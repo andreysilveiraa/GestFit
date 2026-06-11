@@ -17,15 +17,14 @@ public class DespesaController {
     private DespesaService despesaService;
 
     @Autowired
-    private DespesaRepository despesaRepository; // Injetado para dar suporte à exclusão direta
+    private DespesaRepository despesaRepository;
 
     // Carrega a página principal de despesas
     @GetMapping
     public String listarDespesas(Model model) {
-        // CORRIGIDO: Usa o seu listarTodas()
         model.addAttribute("listaDespesas", despesaService.listarTodas());
 
-        // Calcula o total direto na stream para não precisar criar outro método no seu service
+        // Calcula o total direto na stream para não precisar criar outro metodo no seu service
         double total = despesaService.listarTodas().stream()
                 .mapToDouble(Despesa::getValor)
                 .sum();
@@ -38,16 +37,18 @@ public class DespesaController {
 
     // Processa o salvamento de uma nova despesa
     @PostMapping("/salvar")
-    public String salvarDespesa(@ModelAttribute("novaDespesa") Despesa despesa) {
-        // CORRIGIDO: Usa o seu método salvar()
+    public String salvarDespesa(@ModelAttribute("novaDespesa") Despesa despesa,
+                                @RequestHeader(value = "Referer", required = false) String referer) {
         despesaService.salvar(despesa);
-        return "redirect:/despesas?sucesso";
+        if (referer != null) {
+            return "redirect:" + referer;
+        }
+        return "redirect:/despesas";
     }
 
     // Processa a exclusão de uma despesa
     @PostMapping("/excluir/{id}")
     public String excluirDespesa(@PathVariable("id") Long id) {
-        // CORRIGIDO: Deleta direto pelo repositório para manter seu Service enxuto
         despesaRepository.deleteById(id);
         return "redirect:/despesas?excluido";
     }

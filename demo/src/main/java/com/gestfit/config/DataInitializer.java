@@ -20,6 +20,7 @@ public class DataInitializer {
                                    MatriculaRepository matriculaRepo,
                                    ProfessorRepository professorRepo,
                                    RecepcionistaRepository recepcionistaRepo,
+                                   GerenteRepository gerenteRepo,
                                    PagamentoRepository pagamentoRepo,
                                    FolhaDePagamentoRepository folhaDePagamentoRepo,
                                    DespesaRepository despesaRepo,
@@ -95,15 +96,36 @@ public class DataInitializer {
                 }
             }
 
-            if (usuarioRepo.count() == 0) {
-                Usuario admin = new Usuario();
-                admin.setNome("Andrey Admin");
-                admin.setCpf("000.000.000-00");
-                admin.setLogin("admin");
-                admin.setSenha("admin123");
-                admin.setPerfil(PerfilUsuario.ADMIN);
-                usuarioRepo.save(admin);
+            // --- Gerentes (Adicionado Novo Bloco de Teste) ---
+            List<Gerente> novosGerentes = List.of(
+                    new Gerente(
+                            "Roberta Malta", "888.999.111-22", "G-0001", "85977771111", "roberta.gerente@gestfit.com",
+                            LocalDate.of(1988, 5, 20), "Gerente Geral", 5500.0, LocalDate.now(),
+                            "44h", "Manhã", "Administrativo"
+                    )
+            );
 
+            for (Gerente g : novosGerentes) {
+                if (gerenteRepo.findByCpf(g.getCpf()).isEmpty()) {
+                    gerenteRepo.save(g);
+                    System.out.println(">>> Gerente de Teste " + g.getNome() + " criado com sucesso!");
+                }
+            }
+
+            // 1. Verifica pelo CPF da recepcão
+            if (!usuarioRepo.existsByCpf("000.000.000-00")) {
+                Usuario recep = new Usuario();
+                recep.setNome("Andrey Admin");
+                recep.setCpf("000.000.000-00");
+                recep.setLogin("recep");
+                recep.setSenha("recep123");
+                recep.setPerfil(PerfilUsuario.RECEPCAO);
+                usuarioRepo.save(recep);
+                System.out.println(">>> Usuário 'recep' criado!");
+            }
+
+            // 2. Verifica pelo CPF do professor
+            if (!usuarioRepo.existsByCpf("111.111.111-11")) {
                 Usuario prof = new Usuario();
                 prof.setNome("Professor Teste");
                 prof.setCpf("111.111.111-11");
@@ -111,8 +133,19 @@ public class DataInitializer {
                 prof.setSenha("prof123");
                 prof.setPerfil(PerfilUsuario.PROFESSOR);
                 usuarioRepo.save(prof);
+                System.out.println(">>> Usuário 'prof' criado!");
+            }
 
-                System.out.println(">>> Usuários de teste (admin e prof) criados com sucesso!");
+            // 3. Verifica pelo CPF da gerente
+            if (!usuarioRepo.existsByCpf("888.999.111-22")) {
+                Usuario gerente = new Usuario();
+                gerente.setNome("Roberta Gerente Teste");
+                gerente.setCpf("888.999.111-22");
+                gerente.setLogin("gerente");
+                gerente.setSenha("gerente123");
+                gerente.setPerfil(PerfilUsuario.ADMIN);
+                usuarioRepo.save(gerente);
+                System.out.println(">>> Usuário 'gerente' criado com sucesso!");
             }
 
             // PARTE DA JULIANA: Plano e Matrícula
@@ -156,10 +189,8 @@ public class DataInitializer {
                 System.out.println(">>> Registro de Pagamento 2 (PAGO via PIX) criado no Supabase!");
             }
 
-            if (despesaRepo.count() == 0 && folhaDePagamentoRepo.count() == 0) {
-                System.out.println("\n=== INICIANDO CONFIGURAÇÃO DE TESTE DO SUBMÓDULO FINANCEIRO ===");
-
-
+            // 1. Bloco isolado para as despesas
+            if (despesaRepo.count() == 0) {
                 Despesa contaAluguel = new Despesa(
                         "Aluguel do Galpão da Academia",
                         4500.00,
@@ -167,13 +198,18 @@ public class DataInitializer {
                         CategoriaDaDespesa.ALUGUEL
                 );
                 despesaRepo.save(contaAluguel);
-                System.out.println(">>> Teste A: Despesa manual de ALUGUEL criada no Supabase!");
+                System.out.println(">>> Despesa de ALUGUEL criada!");
+            }
 
-
-                System.out.println(">>> Teste B: Chamando o orquestrador 'processarSalarios()'...");
-                financeiroService.processarSalarios();
-
-                System.out.println("=== FINALIZADO COM SUCESSO OS TESTES DO INTEGRADO FINANCEIRO ===\n");
+            // 2. Bloco isolado para as folhas (O que vai fazer a tabela aparecer rodando o projeto!)
+            if (folhaDePagamentoRepo.count() == 0) {
+                System.out.println(">>> Criando folhas de teste rodando o processarSalarios()...");
+                try {
+                    financeiroService.processarSalarios();
+                    System.out.println(">>> Folhas de pagamento processadas com sucesso!");
+                } catch (Exception e) {
+                    System.out.println(">>> Erro ao processar: " + e.getMessage());
+                }
             }
         };
     }

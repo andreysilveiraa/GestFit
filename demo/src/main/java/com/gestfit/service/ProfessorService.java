@@ -23,7 +23,7 @@ public class ProfessorService {
         }
         if(profRepo.findByMatricula(p.getMatricula()).isPresent()) {
             throw new RuntimeException("Já existe esta matrícula cadastrada");
-    }
+        }
         profRepo.save(p);
     }
 
@@ -36,8 +36,8 @@ public class ProfessorService {
 
     public void excluirProfessor (String matricula){
         if(!profRepo.findByMatricula(matricula).isPresent()){
-                throw new RuntimeException("Professor não encontrado no sistema");
-            }
+            throw new RuntimeException("Professor não encontrado no sistema");
+        }
         profRepo.deleteByMatricula(matricula);
     }
 }

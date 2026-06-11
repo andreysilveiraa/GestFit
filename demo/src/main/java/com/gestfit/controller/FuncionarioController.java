@@ -2,8 +2,10 @@ package com.gestfit.controller;
 
 import com.gestfit.model.Professor;
 import com.gestfit.model.Recepcionista;
+import com.gestfit.model.Gerente;
 import com.gestfit.repository.ProfessorRepository;
 import com.gestfit.repository.RecepcionistaRepository;
+import com.gestfit.repository.GerenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,17 +24,20 @@ public class FuncionarioController {
     @Autowired
     private RecepcionistaRepository recepRepo;
 
+    @Autowired
+    private GerenteRepository gerenteRepo;
+
     @GetMapping
     public String listarTodosOsFuncionarios(Model model) {
-        // Busca todos os funcionários no Supabase
-        // Adiciona à "sacola" (model) para o Thymeleaf ler
 
         List<Professor> professores = profRepo.findAll();
         List<Recepcionista> recepcionistas = recepRepo.findAll();
+        List<Gerente> gerentes = gerenteRepo.findAll();
 
         List<com.gestfit.model.Funcionario> todosFuncionarios = new java.util.ArrayList<>();
         todosFuncionarios.addAll(professores);
         todosFuncionarios.addAll(recepcionistas);
+        todosFuncionarios.addAll(gerentes);
 
         model.addAttribute("listaFuncionarios", todosFuncionarios);
 

@@ -61,4 +61,12 @@ public abstract class Funcionario extends Pessoa {
         this.cargoHorario = cargoHorario;
     }
 
+    public String getTurno() {
+        return turno;
+    }
+
+    public void setTurno(String turno) {
+        this.turno = turno;
+    }
+
 }
